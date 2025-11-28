@@ -36,21 +36,59 @@ function criarConta()
     }
 
     listarClientes();
-    $indice = (int)trim(readline("Selecione a vítima (número): ")) - 1;
+    do {
+        $continuar = false;
+        $indice = (int)trim(readline("Selecione a vítima (número): ")) - 1;
 
-    if (!isset($clientes[$indice])) {
-        print "Vítima inválida!\n";
-        return;
-    }
+        if (!isset($clientes[$indice])) {
+            print "Vítima inválida!\n";
+            $continuar = true;
+        }
+    } while ($continuar);
+
+    do {
+        print("Escolha o banco para a conta: \n");
+        print("1. Banco da esquina\n");
+        print("2. Banco dos golpistas\n");
+        print("3. Banco da outra rua\n");
+        print("4. Banco do Estevão\n");
+        $bancoOpcao = trim(readline("Digite o número do banco: "));
+
+        switch ($bancoOpcao) {
+            case '1':
+                $banco = "Banco da esquina";
+                $continuar = false;
+                break;
+            case '2':
+                $banco = "Banco dos golpistas";
+                $continuar = false;
+                break;
+            case '3':
+                $banco = "Banco da outra rua";
+                $continuar = false;
+                break;
+            case '4':
+                $banco = "Banco do Estevão";
+                $continuar = false;
+                break;
+            default:
+                print "Banco inválido!\n";
+                $continuar = true;
+                break;
+        }
+    } while ($continuar);
 
     $numeroConta = rand(10000, 99999);
     $clientes[$indice]['contas'][] = [
         'numero' => $numeroConta,
         'saldo' => 0,
+        'Banco da conta' => $banco,
+        'cheque_especial' => CHEQUE_ESPECIAL,
         'extrato' => []
     ];
 
-    print "Conta número $numeroConta criada com sucesso!\n";
+    print "Conta número $numeroConta criada com sucesso no $banco!\n";
+    sleep(3);
 }
 
 function operacoesContaBancaria()
@@ -79,7 +117,7 @@ function operacoesContaBancaria()
 
     print "\nContas de {$cliente['nome']}:\n";
     foreach ($cliente['contas'] as $i => $conta) {
-        print ($i + 1) . ". Conta: {$conta['numero']} | Saldo: R$ " . number_format($conta['saldo'], 2, ',', '.') . "\n";
+        print ($i + 1) . ". Conta: {$conta['numero']} | Banco: {$conta['Banco da conta']} | Saldo: R$ " . number_format($conta['saldo'], 2, ',', '.') . "\n";
     }
 
     $indiceConta = (int)trim(readline("Selecione a conta (número): ")) - 1;
@@ -136,7 +174,7 @@ function depositar(&$conta, $nomeCliente)
     }
 
     $conta['saldo'] += $valor;
-    $data = date('d/m/Y H:i:s');
+    $data = date('d/m/YYYY H-3:i:s');
     $conta['extrato'][] = "Depósito de R$ " . number_format($valor, 2, ',', '.') . " em $data";
 
     print "Depósito realizado com sucesso! Novo saldo: R$ " . number_format($conta['saldo'], 2, ',', '.') . "\n";
